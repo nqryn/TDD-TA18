@@ -11,9 +11,11 @@ def test_wrong_login():
         'Content-Type': 'application/json',
         'Accept': '*/*',
     }
-    response = requests.post(api_login_url, data=payload, headers=headers)
-    print(response.json())
-    print('*' * 120)
+    response = requests.post(api_login_url, json=payload, headers=headers)
+    # 401 BAD REQUEST
+    assert response.status_code == 401
+    response_json = response.json()
+    assert response_json.get('message') == 'Invalid email/password combination'
 
 
 def test_contacts_postman_api():
@@ -24,6 +26,7 @@ def test_contacts_postman_api():
     }
     response = requests.get(contacts_url, headers=headers)
 
+    # 200 OK
     assert response.status_code == 200
     assert len(response.json()) == 1
     my_contact = response.json()[0]
